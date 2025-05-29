@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Sender</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script>
+        // Confirmation before submitting
+        function confirmSubmit(event) {
+            const msg = document.getElementById("message").value;
+            const dept = document.getElementById("department").value;
+
+            if (!dept) {
+                alert("Please select a department.");
+                event.preventDefault();
+                return false;
+            }
+
+            if (!msg.trim()) {
+                alert("Message cannot be empty.");
+                event.preventDefault();
+                return false;
+            }
+
+        }
+
+        // Live character count
+        function updateCount() {
+            const msg = document.getElementById("message").value;
+            document.getElementById("charCount").innerText = msg.length + " characters";
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Send Email to Students</h1>
+        {% if message %}
+            <div class="message">{{ message }}</div>
+        {% endif %}
+
+        <form method="post" action="/send" onsubmit="return confirmSubmit(event)">
+            <b><label for="department"><b>Select Department:</b></label></b>
+            <select name="department" id="department" required>
+                <option value="" disabled {% if not selected_department %}selected{% endif %}>Choose...</option>
+                <option value="CSE" {% if selected_department == "CSE" %}selected{% endif %}>CSE</option>
+                <option value="ECE" {% if selected_department == "ECE" %}selected{% endif %}>ECE</option>
+                <option value="MECH" {% if selected_department == "MECH" %}selected{% endif %}>MECH</option>
+                <option value="ALL" {% if selected_department == "ALL" %}selected{% endif %}>ALL</option>
+                <!-- Add more departments if needed -->
+            </select>
+
+            <label for="message"><b>Enter Message:</b></label>
+            <textarea name="message" id="message" rows="6" oninput="updateCount()" required>{{ typed_message }}</textarea>
+            <div id="charCount">{{ typed_message | length }} characters</div>
+
+            <button type="submit">Send Email</button>
+        </form>
+    </div>
+</body>
+</html>
